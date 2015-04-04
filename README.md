@@ -4,9 +4,10 @@ This is an easy to use AES256 module for nodejs.
 This module generates a random [initialization vector](https://en.wikipedia.org/wiki/Initialization_vector) each time the encrypt method is called. Furthermore, your shared key can be of any size because it is hashed using sha256.
 
 ## Setup
-Make sure you require the nodejs-aes256 module
 
-`var aes256 = require('./nodejs-aes256');`
+`npm install nodejs-aes256`
+
+`var aes256 = require('nodejs-aes256');`
 
 ##Encryption
 Ciphertext is base64 encoded. The first parameter is the shared key and the second is the plaintext.
