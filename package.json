@@ -1,0 +1,25 @@
+{
+  "name": "nodejs-aes256",
+  "version": "1.0.0",
+  "description": "This is an easy to use AES256 module for nodejs.",
+  "main": "nodejs-aes256.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jaysvoboda/nodejs-aes256.git"
+  },
+  "dependencies": {
+	"crypto": "0.0.3"
+  },
+  "keywords": [
+    "aes",
+    "aes256",
+    "encryption",
+    "cryptography"
+  ],
+  "author": "Jay Svoboda <jay@svoboda.co> (http://jay.svoboda.co)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jaysvoboda/nodejs-aes256/issues"
+  },
+  "homepage": "https://github.com/jaysvoboda/nodejs-aes256"
+}
