@@ -18,7 +18,7 @@ Ciphertext is base64 encoded. The first parameter is the shared key and the seco
 ##Decryption
 For decryption, simply provide the shared key and ciphertext.
 
-`var plaintext = aes256.encrypt(key, ciphertext);`
+`var plaintext = aes256.decrypt(key, ciphertext);`
 
 ##Notes
 
