@@ -1,25 +1,58 @@
 {
-  "name": "nodejs-aes256",
+  "name": "aes256",
   "version": "1.0.0",
-  "description": "This is an easy to use AES256 module for nodejs.",
-  "main": "nodejs-aes256.js",
+  "description": "A Node.js module to simplify using the built-in \"crypto\" module for AES256 encryption with random initialization vectors",
+  "author": {
+    "name": "James M. Greene",
+    "email": "james.m.greene@gmail.com",
+    "url": "http://greene.io/"
+  },
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jaysvoboda/nodejs-aes256.git"
+    "url": "git+https://github.com/JamesMGreene/node-aes256.git"
   },
-  "dependencies": {
-	"crypto": "0.0.3"
+  "bugs": {
+    "url": "https://github.com/JamesMGreene/node-aes256/issues"
   },
+  "homepage": "https://github.com/JamesMGreene/node-aes256#readme",
   "keywords": [
     "aes",
     "aes256",
+    "iv",
+    "initialization",
+    "vector",
     "encryption",
     "cryptography"
   ],
-  "author": "Jay Svoboda <jay@svoboda.co> (http://jay.svoboda.co)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/jaysvoboda/nodejs-aes256/issues"
+  "main": "index.js",
+  "scripts": {
+    "test": "grunt travis --verbose"
   },
-  "homepage": "https://github.com/jaysvoboda/nodejs-aes256"
+  "config": {
+    "blanket": {
+      "pattern": "",
+      "data-cover-never": [
+        "node_modules",
+        "test",
+        "coverage"
+      ],
+      "data-cover-reporter-options": {
+        "relativepath": true
+      }
+    },
+    "travis-cov": {
+      "threshold": 100
+    }
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^0.11.3",
+    "grunt-env": "^0.4.4",
+    "grunt-mocha-cov": "^0.4.0",
+    "grunt-open": "^0.2.3",
+    "mocha": "^2.3.4",
+    "travis-cov": "^0.2.5"
+  }
 }

@@ -1,0 +1,70 @@
+{
+  /* Enforcing options */
+  "bitwise": true,
+  "camelcase": true,
+  "curly": true,
+  "eqeqeq": true,
+  /* "es3": false, */
+  /* "es5": false, */
+  /* "esversion": 5, */
+  "forin": true,
+  "freeze": true,
+  "funcscope": true,
+  "futurehostile": true,
+  "immed": true,
+  "indent": 2,
+  "latedef": true,
+  "newcap": true,
+  "noarg": true,
+  "nocomma": true,
+  "noempty": true,
+  "nonbsp": true,
+  "nonew": true,
+  "quotmark": "single",
+  "singleGroups": false,
+  "strict": false,        /* Use `false` for Node.js-only linting */
+  "trailing": true,
+  "undef": true,
+  "unused": true,
+  "varstmt": false,
+  "maxparams": 4,
+  "maxdepth": 5,
+  "maxstatements": 30,
+  "maxlen": false,        /* IDEAL: 120? */
+
+
+  /* Relaxing options */
+  "asi": false,
+  "boss": false,
+  "debug": false,
+  "elision": false,
+  "eqnull": true,
+  "esnext": false,
+  "evil": false,
+  "expr": false,
+  "funcscope": false,
+  "gcl": false,
+  "globalstrict": false,
+  "iterator": false,
+  "lastsemic": false,
+  "laxbreak": false,
+  "laxcomma": false,
+  "loopfunc": false,
+  "maxerr": 50,
+  "moz": false,
+  "multistr": false,
+  "notypeof": false,
+  "noyield": false,
+  "plusplus": false,
+  "proto": false,
+  "scripturl": false,
+  "smarttabs": false,
+  "shadow": "outer",
+  "sub": false,
+  "supernew": false,
+  "validthis": false,
+  "withstmt": false,
+
+  /* Environments */
+  "node": true
+}
