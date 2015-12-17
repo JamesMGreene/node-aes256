@@ -1,26 +1,62 @@
-# nodejs-aes256
-This is an easy to use AES256 module for nodejs.
+# aes256
+[![GitHub Latest Release](https://badge.fury.io/gh/JamesMGreene%2Fnode-aes256.svg)](https://github.com/JamesMGreene/node-aes256) [![Build Status](https://secure.travis-ci.org/JamesMGreene/node-aes256.svg?branch=master)](https://travis-ci.org/JamesMGreene/node-aes256) [![Coverage Status](https://coveralls.io/repos/JamesMGreene/node-aes256/badge.svg?branch=master&service=github)](https://coveralls.io/github/JamesMGreene/node-aes256?branch=master) [![Dependency Status](https://david-dm.org/JamesMGreene/node-aes256.svg?theme=shields.io)](https://david-dm.org/JamesMGreene/node-aes256) [![Dev Dependency Status](https://david-dm.org/JamesMGreene/node-aes256/dev-status.svg?theme=shields.io)](https://david-dm.org/JamesMGreene/node-aes256#info=devDependencies)
 
-This module generates a random [initialization vector](https://en.wikipedia.org/wiki/Initialization_vector) each time the encrypt method is called. Furthermore, your shared key can be of any size because it is hashed using sha256.
 
-## Setup
-Make sure you install and require the nodejs-aes256 module.
+A Node.js module to simplify using the built-in `crypto` module for AES-256 encryption with random initialization vectors.
 
-`npm install nodejs-aes256`
+This module generates a random [initialization vector](https://en.wikipedia.org/wiki/Initialization_vector) each time one of the `encrypt` methods is called.
 
-`var aes256 = require('nodejs-aes256');`
+Furthermore, your symmetric session key (a.k.a. secret, a.k.a. passphrase) can be of any size because it is hashed using SHA-256.
 
-##Encryption
-Ciphertext is base64 encoded. The first parameter is the shared key and the second is the plaintext.
 
-`var ciphertext = aes256.encrypt(key, plaintext);`
+## Install
 
-##Decryption
-For decryption, simply provide the shared key and ciphertext.
+```shell
+$ npm install aes256
+```
 
-`var plaintext = aes256.decrypt(key, ciphertext);`
 
-##Notes
+## Usage
 
-* This has only been tested with strings for the shared key and plaintext
-* It does not detect if decryption has failed
+### Example using static methods
+
+```js
+var aes256 = require('aes256');
+
+var key = 'my passphrase';
+var plaintext = 'my plaintext message';
+
+var encrypted = aes256.encrypt(key, plaintext);
+var decrypted = aes256.decrypt(key, encrypted);
+
+// plaintext === encrypted
+```
+
+
+### Example using an `AesCipher` instance
+
+```js
+var aes256 = require('aes256');
+
+var key = 'my passphrase';
+var plaintext = 'my plaintext message';
+
+var cipher = aes256.createCipher(key);
+
+var encrypted = cipher.encrypt(plaintext);
+var decrypted = cipher.decrypt(encrypted);
+
+// plaintext === encrypted
+```
+
+
+#### API
+
+_Documentation forthcoming...._
+
+For now, looking at the above usage examples, the code, or the unit tests should all give you a pretty good idea without much effort as the API surface area is very small.
+
+
+## License
+
+Copyright (c) 2015, James M. Greene (MIT License)
