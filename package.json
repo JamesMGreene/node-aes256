@@ -1,6 +1,6 @@
 {
   "name": "aes256",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A Node.js module to simplify using the built-in \"crypto\" module for AES256 encryption with random initialization vectors",
   "author": {
     "name": "James M. Greene",

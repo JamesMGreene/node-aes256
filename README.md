@@ -29,7 +29,7 @@ var plaintext = 'my plaintext message';
 var encrypted = aes256.encrypt(key, plaintext);
 var decrypted = aes256.decrypt(key, encrypted);
 
-// plaintext === encrypted
+// plaintext === decrypted
 ```
 
 
@@ -46,13 +46,13 @@ var cipher = aes256.createCipher(key);
 var encrypted = cipher.encrypt(plaintext);
 var decrypted = cipher.decrypt(encrypted);
 
-// plaintext === encrypted
+// plaintext === decrypted
 ```
 
 
 #### API
 
-_Documentation forthcoming...._
+_Documentation maaaaaybe forthcoming...._
 
 For now, looking at the above usage examples, the code, or the unit tests should all give you a pretty good idea without much effort as the API surface area is very small.
 
