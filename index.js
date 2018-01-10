@@ -64,7 +64,7 @@ var aes256 = {
     if (typeof key !== 'string' || !key) {
       throw new TypeError('Provided "key" must be a non-empty string');
     }
-    if (typeof encrypted !== 'string' || !encrypted || encrypted.length < 17) {
+    if (typeof encrypted !== 'string' || !encrypted ) {
       throw new TypeError('Provided "encrypted" must be a non-empty string');
     }
 
@@ -72,6 +72,9 @@ var aes256 = {
     sha256.update(key);
 
     var input = new Buffer(encrypted, 'base64');
+    if (input.length < 17) {
+      throw new TypeError('Provided "encrypted" must be a non-empty string');
+    }
 
     // Initialization Vector
     var iv = input.slice(0, 16);
