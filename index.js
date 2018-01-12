@@ -77,7 +77,6 @@ var aes256 = {
       throw new TypeError('Provided "encrypted" must decrypt to a non-empty string');
     }
 
-
     // Initialization Vector
     var iv = input.slice(0, 16);
     var decipher = crypto.createDecipheriv(CIPHER_ALGORITHM, sha256.digest(), iv);

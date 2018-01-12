@@ -182,6 +182,15 @@ describe('aes256', function() {
       expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
     });
 
+    it('should throw an Error if a non-decryptable string `encrypted` is provided', function() {
+      var fn = function() {
+        // string length >= 17, Buffer length < 17
+        return api.decrypt('my magical passphrase', 'abcdef1234567890abcdef');  // length < 17
+      };
+      var expectedErrMsgRegExp = /^Provided "encrypted" must decrypt to a non-empty string$/;
+      expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
+    });
+
   });
 
 
@@ -418,6 +427,15 @@ describe('aes256', function() {
             return validCipher.decrypt('');
           };
           var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string$/;
+          expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
+        });
+
+        it('should throw an Error if a non-decryptable string `encrypted` is provided', function() {
+          var fn = function() {
+            // string length >= 17, Buffer length < 17
+            return validCipher.decrypt('abcdef1234567890abcdef');
+          };
+          var expectedErrMsgRegExp = /^Provided "encrypted" must decrypt to a non-empty string$/;
           expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
         });
 
