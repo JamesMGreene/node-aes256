@@ -95,7 +95,7 @@ var aes256 = {
 /**
  * Create a symmetric cipher with a given passphrase to then encrypt/decrypt data symmetrically.
  * @param {String} key  A passphrase of any length to used to generate a symmetric session key.
- * @protected
+ * @public
  * @constructor
  */
 function AesCipher(key) {
@@ -116,7 +116,7 @@ function AesCipher(key) {
  * Encrypt a clear-text message using AES-256 plus a random Initialization Vector.
  * @param {String} plaintext  The clear-text message to be encrypted.
  * @returns {String} A custom-encrypted version of the input.
- * @protected
+ * @public
  * @method
  */
 AesCipher.prototype.encrypt = function(plaintext) {
@@ -127,7 +127,7 @@ AesCipher.prototype.encrypt = function(plaintext) {
  * Decrypt an encrypted message back to clear-text using AES-256 plus a random Initialization Vector.
  * @param {String} encrypted  The encrypted message to be decrypted.
  * @returns {String} The original plain-text message.
- * @protected
+ * @public
  * @method
  */
 AesCipher.prototype.decrypt = function(encrypted) {
