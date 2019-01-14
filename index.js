@@ -26,17 +26,17 @@ var aes256 = {
   /**
    * Encrypt a clear-text message using AES-256 plus a random Initialization Vector.
    * @param {String} key  A passphrase of any length to used to generate a symmetric session key.
-   * @param {String} plaintext  The clear-text message to be encrypted.
-   * @returns {String} A custom-encrypted version of the input.
+   * @param {String|Buffer} input  The clear-text message or buffer to be encrypted.
+   * @returns {String|Buffer} A custom-encrypted version of the input.
    * @public
    * @method
    */
-  encrypt: function(key, plaintext) {
+  encrypt: function(key, input) {
     if (typeof key !== 'string' || !key) {
       throw new TypeError('Provided "key" must be a non-empty string');
     }
-    if (typeof plaintext !== 'string' || !plaintext) {
-      throw new TypeError('Provided "plaintext" must be a non-empty string');
+    if (!(typeof input === 'string' || Buffer.isBuffer(input)) || !input) {
+      throw new TypeError('Provided "input" must be a non-empty string or buffer');
     }
 
     var sha256 = crypto.createHash('sha256');
@@ -46,8 +46,19 @@ var aes256 = {
     var iv = crypto.randomBytes(16);
     var cipher = crypto.createCipheriv(CIPHER_ALGORITHM, sha256.digest(), iv);
 
-    var ciphertext = cipher.update(new Buffer(plaintext));
-    var encrypted = Buffer.concat([iv, ciphertext, cipher.final()]).toString('base64');
+    var isString = typeof input === 'string';
+
+    var buffer = input;
+    if (isString) {
+      buffer = new Buffer(input);
+    }
+
+    var ciphertext = cipher.update(buffer);
+    var encrypted = Buffer.concat([iv, ciphertext, cipher.final()]);
+
+    if (isString) {
+      encrypted = encrypted.toString('base64');
+    }
 
     return encrypted;
   },
@@ -55,8 +66,8 @@ var aes256 = {
   /**
    * Decrypt an encrypted message back to clear-text using AES-256 plus a random Initialization Vector.
    * @param {String} key  A passphrase of any length to used to generate a symmetric session key.
-   * @param {String} encrypted  The encrypted message to be decrypted.
-   * @returns {String} The original plain-text message.
+   * @param {String|Buffer} encrypted  The encrypted message to be decrypted.
+   * @returns {String|Buffer} The original plain-text message or buffer.
    * @public
    * @method
    */
@@ -64,17 +75,22 @@ var aes256 = {
     if (typeof key !== 'string' || !key) {
       throw new TypeError('Provided "key" must be a non-empty string');
     }
-    if (typeof encrypted !== 'string' || !encrypted) {
-      throw new TypeError('Provided "encrypted" must be a non-empty string');
+    if (!(typeof encrypted === 'string' || Buffer.isBuffer(encrypted)) || !encrypted) {
+      throw new TypeError('Provided "encrypted" must be a non-empty string or buffer');
     }
 
     var sha256 = crypto.createHash('sha256');
     sha256.update(key);
 
-    var input = new Buffer(encrypted, 'base64');
+    var isString = typeof encrypted === 'string';
+
+    var input = encrypted;
+    if (isString) {
+      input = new Buffer(encrypted, 'base64');
+    }
 
     if (input.length < 17) {
-      throw new TypeError('Provided "encrypted" must decrypt to a non-empty string');
+      throw new TypeError('Provided "encrypted" must decrypt to a non-empty string or buffer');
     }
 
     // Initialization Vector
@@ -82,9 +98,15 @@ var aes256 = {
     var decipher = crypto.createDecipheriv(CIPHER_ALGORITHM, sha256.digest(), iv);
 
     var ciphertext = input.slice(16);
-    var plaintext = decipher.update(ciphertext) + decipher.final();
 
-    return plaintext;
+    var output;
+    if (isString) {
+      output = decipher.update(ciphertext) + decipher.final();
+    } else {
+      output = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
+    }
+
+    return output;
   }
 
 };

@@ -64,27 +64,27 @@ describe('aes256', function() {
       expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
     });
 
-    it('should throw an Error if a null `plaintext` is provided', function() {
+    it('should throw an Error if a null `input` is provided', function() {
       var fn = function() {
         return api.encrypt(validKey, null);
       };
-      var expectedErrMsgRegExp = /^Provided "plaintext" must be a non-empty string$/;
+      var expectedErrMsgRegExp = /^Provided "input" must be a non-empty string or buffer$/;
       expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
     });
 
-    it('should throw an Error if a non-string `plaintext` is provided', function() {
+    it('should throw an Error if a non-string and non-buffer `input` is provided', function() {
       var fn = function() {
         return api.encrypt(validKey, {});
       };
-      var expectedErrMsgRegExp = /^Provided "plaintext" must be a non-empty string$/;
+      var expectedErrMsgRegExp = /^Provided "input" must be a non-empty string or buffer$/;
       expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
     });
 
-    it('should throw an Error if a empty string `plaintext` is provided', function() {
+    it('should throw an Error if a empty string `input` is provided', function() {
       var fn = function() {
         return api.encrypt(validKey, '');
       };
-      var expectedErrMsgRegExp = /^Provided "plaintext" must be a non-empty string$/;
+      var expectedErrMsgRegExp = /^Provided "input" must be a non-empty string or buffer$/;
       expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
     });
 
@@ -162,15 +162,15 @@ describe('aes256', function() {
       var fn = function() {
         return api.decrypt('my magical passphrase', null);
       };
-      var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string$/;
+      var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string or buffer$/;
       expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
     });
 
-    it('should throw an Error if a non-string `encrypted` is provided', function() {
+    it('should throw an Error if a non-string and non-buffer `encrypted` is provided', function() {
       var fn = function() {
         return api.decrypt('my magical passphrase', {});
       };
-      var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string$/;
+      var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string or buffer$/;
       expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
     });
 
@@ -178,7 +178,7 @@ describe('aes256', function() {
       var fn = function() {
         return api.decrypt('my magical passphrase', '');
       };
-      var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string$/;
+      var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string or buffer$/;
       expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
     });
 
@@ -187,7 +187,7 @@ describe('aes256', function() {
         // string length >= 17, Buffer length < 17
         return api.decrypt('my magical passphrase', 'abcdef1234567890abcdef');  // length < 17
       };
-      var expectedErrMsgRegExp = /^Provided "encrypted" must decrypt to a non-empty string$/;
+      var expectedErrMsgRegExp = /^Provided "encrypted" must decrypt to a non-empty string or buffer$/;
       expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
     });
 
@@ -319,27 +319,27 @@ describe('aes256', function() {
           expect(encrypted1).to.not.equal(encrypted2);
         });
 
-        it('should throw an Error if a null `plaintext` is provided', function() {
+        it('should throw an Error if a null `input` is provided', function() {
           var fn = function() {
             return validCipher.encrypt(null);
           };
-          var expectedErrMsgRegExp = /^Provided "plaintext" must be a non-empty string$/;
+          var expectedErrMsgRegExp = /^Provided "input" must be a non-empty string or buffer$/;
           expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
         });
 
-        it('should throw an Error if a non-string `plaintext` is provided', function() {
+        it('should throw an Error if a non-string and non-buffer `input` is provided', function() {
           var fn = function() {
             return validCipher.encrypt({});
           };
-          var expectedErrMsgRegExp = /^Provided "plaintext" must be a non-empty string$/;
+          var expectedErrMsgRegExp = /^Provided "input" must be a non-empty string or buffer$/;
           expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
         });
 
-        it('should throw an Error if a empty string `plaintext` is provided', function() {
+        it('should throw an Error if a empty string `input` is provided', function() {
           var fn = function() {
             return validCipher.encrypt('');
           };
-          var expectedErrMsgRegExp = /^Provided "plaintext" must be a non-empty string$/;
+          var expectedErrMsgRegExp = /^Provided "input" must be a non-empty string or buffer$/;
           expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
         });
 
@@ -410,15 +410,15 @@ describe('aes256', function() {
           var fn = function() {
             return validCipher.decrypt(null);
           };
-          var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string$/;
+          var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string or buffer$/;
           expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
         });
 
-        it('should throw an Error if a non-string `encrypted` is provided', function() {
+        it('should throw an Error if a non-string and non-buffer `encrypted` is provided', function() {
           var fn = function() {
             return validCipher.decrypt({});
           };
-          var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string$/;
+          var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string or buffer$/;
           expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
         });
 
@@ -426,7 +426,7 @@ describe('aes256', function() {
           var fn = function() {
             return validCipher.decrypt('');
           };
-          var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string$/;
+          var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string or buffer$/;
           expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
         });
 
@@ -435,7 +435,7 @@ describe('aes256', function() {
             // string length >= 17, Buffer length < 17
             return validCipher.decrypt('abcdef1234567890abcdef');
           };
-          var expectedErrMsgRegExp = /^Provided "encrypted" must decrypt to a non-empty string$/;
+          var expectedErrMsgRegExp = /^Provided "encrypted" must decrypt to a non-empty string or buffer$/;
           expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
         });
 
