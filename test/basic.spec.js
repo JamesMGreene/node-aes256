@@ -7,6 +7,7 @@ var api = require('..');
 
 var validKey = 'my magical passphrase';
 var validPlaintext = 'My plaintext message';
+var validBuffer = new Buffer(validPlaintext);
 
 
 describe('aes256', function() {
@@ -29,12 +30,27 @@ describe('aes256', function() {
       expect(api.encrypt(validKey, validPlaintext)).to.be.a('string');
     });
 
-    it('should return a different encrypted message each time due to randomized initialization vectors', function() {
+    it('should return a buffer', function() {
+      expect(api.encrypt(validKey, validBuffer)).to.be.instanceof(Buffer);
+    });
+
+    it('should return a different encrypted message each time due to randomized initialization vectors using plaintext', function() {
       var encrypted1 = api.encrypt(validKey, validPlaintext);
       var encrypted2 = api.encrypt(validKey, validPlaintext);
 
       expect(encrypted1).to.be.a('string');
       expect(encrypted2).to.be.a('string');
+      expect(encrypted1).to.have.length.greaterThan(16);  // 16 === length of a standard IV
+      expect(encrypted2).to.have.length.greaterThan(16);  // 16 === length of a standard IV
+      expect(encrypted1).to.not.equal(encrypted2);
+    });
+
+    it('should return a different encrypted message each time due to randomized initialization vectors using buffers', function() {
+      var encrypted1 = api.encrypt(validKey, validBuffer);
+      var encrypted2 = api.encrypt(validKey, validBuffer);
+
+      expect(encrypted1).to.be.instanceof(Buffer);
+      expect(encrypted2).to.be.instanceof(Buffer);
       expect(encrypted1).to.have.length.greaterThan(16);  // 16 === length of a standard IV
       expect(encrypted2).to.have.length.greaterThan(16);  // 16 === length of a standard IV
       expect(encrypted1).to.not.equal(encrypted2);
@@ -88,15 +104,25 @@ describe('aes256', function() {
       expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
     });
 
+    it('should throw an Error if a empty buffer `input` is provided', function() {
+      var fn = function() {
+        return api.encrypt(validKey, new Buffer(''));
+      };
+      var expectedErrMsgRegExp = /^Provided "input" must be a non-empty string or buffer$/;
+      expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
+    });
+
   });
 
 
   describe('.decrypt', function() {
 
     var validEncrypted;
+    var validEncryptedBuffer;
 
     before(function() {
       validEncrypted = api.encrypt(validKey, validPlaintext);
+      validEncryptedBuffer = api.encrypt(validKey, validBuffer);
     });
 
     it('should have an arity of 2', function() {
@@ -105,6 +131,10 @@ describe('aes256', function() {
 
     it('should return a string', function() {
       expect(api.decrypt(validKey, validEncrypted)).to.be.a('string');
+    });
+
+    it('should return a buffer', function() {
+      expect(api.decrypt(validKey, validEncryptedBuffer)).to.be.instanceof(Buffer);
     });
 
     it('should return the original plaintext message each time from the same encrypted message', function() {
@@ -116,6 +146,17 @@ describe('aes256', function() {
       expect(decrypted1).to.equal(validPlaintext);
       expect(decrypted2).to.equal(validPlaintext);
       expect(decrypted1).to.equal(decrypted2);
+    });
+
+    it('should return the original buffer message each time from the same encrypted message', function() {
+      var decrypted1 = api.decrypt(validKey, validEncryptedBuffer);
+      var decrypted2 = api.decrypt(validKey, validEncryptedBuffer);
+
+      expect(decrypted1).to.be.instanceof(Buffer);
+      expect(decrypted2).to.be.instanceof(Buffer);
+      expect(decrypted1.toString('utf8')).to.equal(validPlaintext);
+      expect(decrypted2.toString('utf8')).to.equal(validPlaintext);
+      expect(decrypted1.toString('utf8')).to.equal(decrypted2.toString('utf8'));
     });
 
     it('should return the original plaintext message each time from different encrypted messages', function() {
@@ -132,6 +173,22 @@ describe('aes256', function() {
       expect(decrypted1).to.equal(validPlaintext);
       expect(decrypted2).to.equal(validPlaintext);
       expect(decrypted1).to.equal(decrypted2);
+    });
+
+    it('should return the original buffer message each time from different encrypted messages', function() {
+      var encrypted1 = api.encrypt(validKey, validBuffer);
+      var encrypted2 = api.encrypt(validKey, validBuffer);
+      var decrypted1 = api.decrypt(validKey, encrypted1);
+      var decrypted2 = api.decrypt(validKey, encrypted2);
+
+      // Precondition
+      expect(encrypted1).to.not.equal(encrypted2);
+
+      expect(decrypted1).to.be.instanceof(Buffer);
+      expect(decrypted2).to.be.instanceof(Buffer);
+      expect(decrypted1.toString('utf8')).to.equal(validPlaintext);
+      expect(decrypted2.toString('utf8')).to.equal(validPlaintext);
+      expect(decrypted1.toString('utf8')).to.equal(decrypted2.toString('utf8'));
     });
 
     it('should throw an Error if a null `key` is provided', function() {
@@ -182,10 +239,26 @@ describe('aes256', function() {
       expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
     });
 
+    it('should throw an Error if a empty buffer `encrypted` is provided', function() {
+      var fn = function() {
+        return api.decrypt('my magical passphrase', new Buffer(''));
+      };
+      var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string or buffer$/;
+      expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
+    });
+
     it('should throw an Error if a non-decryptable string `encrypted` is provided', function() {
       var fn = function() {
         // string length >= 17, Buffer length < 17
         return api.decrypt('my magical passphrase', 'abcdef1234567890abcdef');  // length < 17
+      };
+      var expectedErrMsgRegExp = /^Provided "encrypted" must decrypt to a non-empty string or buffer$/;
+      expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
+    });
+
+    it('should throw an Error if a non-decryptable buffer `encrypted` is provided', function() {
+      var fn = function() {
+        return api.decrypt('my magical passphrase', new Buffer('abc'));  // Buffer length < 17
       };
       var expectedErrMsgRegExp = /^Provided "encrypted" must decrypt to a non-empty string or buffer$/;
       expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
@@ -308,12 +381,27 @@ describe('aes256', function() {
           expect(validCipher.encrypt(validPlaintext)).to.be.a('string');
         });
 
-        it('should return a different encrypted message each time due to randomized initialization vectors', function() {
+        it('should return a buffer', function() {
+          expect(validCipher.encrypt(validBuffer)).to.be.instanceof(Buffer);
+        });
+
+        it('should return a different encrypted message each time due to randomized initialization vectors using plaintext', function() {
           var encrypted1 = validCipher.encrypt(validPlaintext);
           var encrypted2 = validCipher.encrypt(validPlaintext);
 
           expect(encrypted1).to.be.a('string');
           expect(encrypted2).to.be.a('string');
+          expect(encrypted1).to.have.length.greaterThan(16);  // 16 === length of a standard IV
+          expect(encrypted2).to.have.length.greaterThan(16);  // 16 === length of a standard IV
+          expect(encrypted1).to.not.equal(encrypted2);
+        });
+
+        it('should return a different encrypted message each time due to randomized initialization vectors using buffers', function() {
+          var encrypted1 = validCipher.encrypt(validBuffer);
+          var encrypted2 = validCipher.encrypt(validBuffer);
+
+          expect(encrypted1).to.be.instanceof(Buffer);
+          expect(encrypted2).to.be.instanceof(Buffer);
           expect(encrypted1).to.have.length.greaterThan(16);  // 16 === length of a standard IV
           expect(encrypted2).to.have.length.greaterThan(16);  // 16 === length of a standard IV
           expect(encrypted1).to.not.equal(encrypted2);
@@ -343,12 +431,28 @@ describe('aes256', function() {
           expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
         });
 
-        it('should create encrypted messages that can be decrypted with `aes256.decrypt`', function() {
+        it('should throw an Error if a empty buffer `input` is provided', function() {
+          var fn = function() {
+            return validCipher.encrypt(new Buffer(''));
+          };
+          var expectedErrMsgRegExp = /^Provided "input" must be a non-empty string or buffer$/;
+          expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
+        });
+
+        it('should create encrypted plaintext messages that can be decrypted with `aes256.decrypt`', function() {
           var encrypted = validCipher.encrypt(validPlaintext);
           var decrypted = api.decrypt(validKey, encrypted);
 
           expect(validCipher.key).to.equal(validKey);
           expect(decrypted).to.equal(validPlaintext);
+        });
+
+        it('should create encrypted buffer messages that can be decrypted with `aes256.decrypt`', function() {
+          var encrypted = validCipher.encrypt(validBuffer);
+          var decrypted = api.decrypt(validKey, encrypted);
+
+          expect(validCipher.key).to.equal(validKey);
+          expect(decrypted.toString('utf8')).to.equal(validPlaintext);
         });
 
       });
@@ -358,10 +462,12 @@ describe('aes256', function() {
 
         var validCipher;
         var validEncrypted;
+        var validEncryptedBuffer;
 
         before(function() {
           validCipher = new AesCipher(validKey);
           validEncrypted = validCipher.encrypt(validPlaintext);
+          validEncryptedBuffer = validCipher.encrypt(validBuffer);
         });
 
         it('should be defined on the AesCipher.prototype', function() {
@@ -379,6 +485,10 @@ describe('aes256', function() {
           expect(validCipher.decrypt(validEncrypted)).to.be.a('string');
         });
 
+        it('should return a buffer', function() {
+          expect(validCipher.decrypt(validEncryptedBuffer)).to.be.instanceof(Buffer);
+        });
+
         it('should return the original plaintext message each time from the same encrypted message', function() {
           var decrypted1 = validCipher.decrypt(validEncrypted);
           var decrypted2 = validCipher.decrypt(validEncrypted);
@@ -388,6 +498,17 @@ describe('aes256', function() {
           expect(decrypted1).to.equal(validPlaintext);
           expect(decrypted2).to.equal(validPlaintext);
           expect(decrypted1).to.equal(decrypted2);
+        });
+
+        it('should return the original buffer message each time from the same encrypted message', function() {
+          var decrypted1 = validCipher.decrypt(validEncryptedBuffer);
+          var decrypted2 = validCipher.decrypt(validEncryptedBuffer);
+
+          expect(decrypted1).to.be.instanceof(Buffer);
+          expect(decrypted2).to.be.instanceof(Buffer);
+          expect(decrypted1.toString('utf8')).to.equal(validPlaintext);
+          expect(decrypted2.toString('utf8')).to.equal(validPlaintext);
+          expect(decrypted1.toString('utf8')).to.equal(decrypted2.toString('utf8'));
         });
 
         it('should return the original plaintext message each time from different encrypted messages', function() {
@@ -404,6 +525,22 @@ describe('aes256', function() {
           expect(decrypted1).to.equal(validPlaintext);
           expect(decrypted2).to.equal(validPlaintext);
           expect(decrypted1).to.equal(decrypted2);
+        });
+
+        it('should return the original buffer message each time from different encrypted messages', function() {
+          var encrypted1 = validCipher.encrypt(validBuffer);
+          var encrypted2 = validCipher.encrypt(validBuffer);
+          var decrypted1 = validCipher.decrypt(encrypted1);
+          var decrypted2 = validCipher.decrypt(encrypted2);
+
+          // Precondition
+          expect(encrypted1).to.not.equal(encrypted2);
+
+          expect(decrypted1).to.be.instanceof(Buffer);
+          expect(decrypted2).to.be.instanceof(Buffer);
+          expect(decrypted1.toString('utf8')).to.equal(validPlaintext);
+          expect(decrypted2.toString('utf8')).to.equal(validPlaintext);
+          expect(decrypted1.toString('utf8')).to.equal(decrypted2.toString('utf8'));
         });
 
         it('should throw an Error if a null `encrypted` is provided', function() {
@@ -430,6 +567,14 @@ describe('aes256', function() {
           expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
         });
 
+        it('should throw an Error if a empty buffer `encrypted` is provided', function() {
+          var fn = function() {
+            return validCipher.decrypt(new Buffer(''));
+          };
+          var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string or buffer$/;
+          expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
+        });
+
         it('should throw an Error if a non-decryptable string `encrypted` is provided', function() {
           var fn = function() {
             // string length >= 17, Buffer length < 17
@@ -439,12 +584,29 @@ describe('aes256', function() {
           expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
         });
 
-        it('should be able to decrypt encrypted messages created with `aes256.encrypt`', function() {
+        it('should throw an Error if a non-decryptable buffer `encrypted` is provided', function() {
+          var fn = function() {
+            // Buffer length < 17
+            return validCipher.decrypt(new Buffer('abc'));
+          };
+          var expectedErrMsgRegExp = /^Provided "encrypted" must decrypt to a non-empty string or buffer$/;
+          expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
+        });
+
+        it('should be able to decrypt encrypted plaintext messages created with `aes256.encrypt`', function() {
           var encrypted = api.encrypt(validKey, validPlaintext);
           var decrypted = validCipher.decrypt(encrypted);
 
           expect(validCipher.key).to.equal(validKey);
           expect(decrypted).to.equal(validPlaintext);
+        });
+
+        it('should be able to decrypt encrypted buffer messages created with `aes256.encrypt`', function() {
+          var encrypted = api.encrypt(validKey, validBuffer);
+          var decrypted = validCipher.decrypt(encrypted);
+
+          expect(validCipher.key).to.equal(validKey);
+          expect(decrypted.toString('utf8')).to.equal(validPlaintext);
         });
 
       });
