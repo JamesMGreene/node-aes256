@@ -25,11 +25,15 @@ var aes256 = require('aes256');
 
 var key = 'my passphrase';
 var plaintext = 'my plaintext message';
+var buffer = new Buffer(plaintext);
 
-var encrypted = aes256.encrypt(key, plaintext);
-var decrypted = aes256.decrypt(key, encrypted);
+var encryptedPlainText = aes256.encrypt(key, plaintext);
+var decryptedPlainText = aes256.decrypt(key, encryptedPlainText);
+// plaintext === decryptedPlainText
 
-// plaintext === decrypted
+var encryptedBuffer = aes256.encrypt(key, buffer);
+var decryptedBuffer = aes256.decrypt(key, encryptedBuffer);
+// plaintext === decryptedBuffer.toString('utf8)
 ```
 
 
@@ -40,13 +44,17 @@ var aes256 = require('aes256');
 
 var key = 'my passphrase';
 var plaintext = 'my plaintext message';
+var buffer = new Buffer(plaintext);
 
 var cipher = aes256.createCipher(key);
 
-var encrypted = cipher.encrypt(plaintext);
-var decrypted = cipher.decrypt(encrypted);
+var encryptedPlainText = cipher.encrypt(plaintext);
+var decryptedPlainText = cipher.decrypt(encryptedPlainText);
+// plaintext === decryptedPlainText
 
-// plaintext === decrypted
+var encryptedBuffer = cipher.encrypt(buffer);
+var decryptedBuffer = cipher.decrypt(encryptedBuffer);
+// plaintext === decryptedBuffer.toString('utf8)
 ```
 
 
