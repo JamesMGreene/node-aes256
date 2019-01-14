@@ -35,7 +35,10 @@ var aes256 = {
     if (typeof key !== 'string' || !key) {
       throw new TypeError('Provided "key" must be a non-empty string');
     }
-    if (!(typeof input === 'string' || Buffer.isBuffer(input)) || !input) {
+
+    var isString = typeof input === 'string';
+    var isBuffer = Buffer.isBuffer(input);
+    if (!(isString || isBuffer) || (isString && !input) || (isBuffer && !Buffer.byteLength(input))) {
       throw new TypeError('Provided "input" must be a non-empty string or buffer');
     }
 
@@ -45,8 +48,6 @@ var aes256 = {
     // Initialization Vector
     var iv = crypto.randomBytes(16);
     var cipher = crypto.createCipheriv(CIPHER_ALGORITHM, sha256.digest(), iv);
-
-    var isString = typeof input === 'string';
 
     var buffer = input;
     if (isString) {
@@ -75,22 +76,27 @@ var aes256 = {
     if (typeof key !== 'string' || !key) {
       throw new TypeError('Provided "key" must be a non-empty string');
     }
-    if (!(typeof encrypted === 'string' || Buffer.isBuffer(encrypted)) || !encrypted) {
+
+    var isString = typeof encrypted === 'string';
+    var isBuffer = Buffer.isBuffer(encrypted);
+    if (!(isString || isBuffer) || (isString && !encrypted) || (isBuffer && !Buffer.byteLength(encrypted))) {
       throw new TypeError('Provided "encrypted" must be a non-empty string or buffer');
     }
 
     var sha256 = crypto.createHash('sha256');
     sha256.update(key);
 
-    var isString = typeof encrypted === 'string';
-
     var input = encrypted;
     if (isString) {
       input = new Buffer(encrypted, 'base64');
-    }
 
-    if (input.length < 17) {
-      throw new TypeError('Provided "encrypted" must decrypt to a non-empty string or buffer');
+      if (input.length < 17) {
+        throw new TypeError('Provided "encrypted" must decrypt to a non-empty string or buffer');
+      }
+    } else {
+      if (Buffer.byteLength(encrypted) < 17) {
+        throw new TypeError('Provided "encrypted" must decrypt to a non-empty string or buffer');
+      }
     }
 
     // Initialization Vector
