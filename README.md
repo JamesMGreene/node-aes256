@@ -25,7 +25,7 @@ var aes256 = require('aes256');
 
 var key = 'my passphrase';
 var plaintext = 'my plaintext message';
-var buffer = new Buffer(plaintext);
+var buffer = Buffer.from(plaintext);
 
 var encryptedPlainText = aes256.encrypt(key, plaintext);
 var decryptedPlainText = aes256.decrypt(key, encryptedPlainText);
@@ -44,7 +44,7 @@ var aes256 = require('aes256');
 
 var key = 'my passphrase';
 var plaintext = 'my plaintext message';
-var buffer = new Buffer(plaintext);
+var buffer = Buffer.from(plaintext);
 
 var cipher = aes256.createCipher(key);
 
@@ -67,4 +67,4 @@ For now, looking at the above usage examples, the code, or the unit tests should
 
 ## License
 
-Copyright (c) 2015, James M. Greene (MIT License)
+Copyright (c) 2015-2021, James M. Greene (MIT License)

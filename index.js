@@ -51,7 +51,7 @@ var aes256 = {
 
     var buffer = input;
     if (isString) {
-      buffer = new Buffer(input);
+      buffer = Buffer.from(input);
     }
 
     var ciphertext = cipher.update(buffer);
@@ -88,7 +88,7 @@ var aes256 = {
 
     var input = encrypted;
     if (isString) {
-      input = new Buffer(encrypted, 'base64');
+      input = Buffer.from(encrypted, 'base64');
 
       if (input.length < 17) {
         throw new TypeError('Provided "encrypted" must decrypt to a non-empty string or buffer');

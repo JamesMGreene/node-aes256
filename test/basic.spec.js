@@ -7,7 +7,7 @@ var api = require('..');
 
 var validKey = 'my magical passphrase';
 var validPlaintext = 'My plaintext message';
-var validBuffer = new Buffer(validPlaintext);
+var validBuffer = Buffer.from(validPlaintext);
 
 
 describe('aes256', function() {
@@ -106,7 +106,7 @@ describe('aes256', function() {
 
     it('should throw an Error if a empty buffer `input` is provided', function() {
       var fn = function() {
-        return api.encrypt(validKey, new Buffer(''));
+        return api.encrypt(validKey, Buffer.from(''));
       };
       var expectedErrMsgRegExp = /^Provided "input" must be a non-empty string or buffer$/;
       expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
@@ -241,7 +241,7 @@ describe('aes256', function() {
 
     it('should throw an Error if a empty buffer `encrypted` is provided', function() {
       var fn = function() {
-        return api.decrypt('my magical passphrase', new Buffer(''));
+        return api.decrypt('my magical passphrase', Buffer.from(''));
       };
       var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string or buffer$/;
       expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
@@ -258,7 +258,7 @@ describe('aes256', function() {
 
     it('should throw an Error if a non-decryptable buffer `encrypted` is provided', function() {
       var fn = function() {
-        return api.decrypt('my magical passphrase', new Buffer('abc'));  // Buffer length < 17
+        return api.decrypt('my magical passphrase', Buffer.from('abc'));  // Buffer length < 17
       };
       var expectedErrMsgRegExp = /^Provided "encrypted" must decrypt to a non-empty string or buffer$/;
       expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
@@ -433,7 +433,7 @@ describe('aes256', function() {
 
         it('should throw an Error if a empty buffer `input` is provided', function() {
           var fn = function() {
-            return validCipher.encrypt(new Buffer(''));
+            return validCipher.encrypt(Buffer.from(''));
           };
           var expectedErrMsgRegExp = /^Provided "input" must be a non-empty string or buffer$/;
           expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
@@ -569,7 +569,7 @@ describe('aes256', function() {
 
         it('should throw an Error if a empty buffer `encrypted` is provided', function() {
           var fn = function() {
-            return validCipher.decrypt(new Buffer(''));
+            return validCipher.decrypt(Buffer.from(''));
           };
           var expectedErrMsgRegExp = /^Provided "encrypted" must be a non-empty string or buffer$/;
           expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
@@ -587,7 +587,7 @@ describe('aes256', function() {
         it('should throw an Error if a non-decryptable buffer `encrypted` is provided', function() {
           var fn = function() {
             // Buffer length < 17
-            return validCipher.decrypt(new Buffer('abc'));
+            return validCipher.decrypt(Buffer.from('abc'));
           };
           var expectedErrMsgRegExp = /^Provided "encrypted" must decrypt to a non-empty string or buffer$/;
           expect(fn).to.throw(TypeError, expectedErrMsgRegExp);
